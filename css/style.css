@@ -75,6 +75,36 @@ body {
   margin-top: 5px;
 }
 
+/* ---------- Filter buttons ---------- */
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.filter-button {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  color: #1f2430;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 10px 18px;
+}
+
+/* Give the user feedback when the mouse is over a button. */
+.filter-button:hover {
+  border-color: #3b6ef5;
+}
+
+/* The button of the filter that is currently selected. */
+.filter-button.active {
+  background-color: #3b6ef5;
+  border-color: #3b6ef5;
+  color: #ffffff;
+}
+
 /* ---------- Task list ---------- */
 
 /* list-style: none removes the bullet points. */
@@ -103,4 +133,13 @@ body {
   background-color: #6b7280;
   font-size: 12px;
   padding: 5px 12px;
+}
+
+/* Green for finished work, orange for work that is still open. */
+.task-status.completed {
+  background-color: #17a673;
+}
+
+.task-status.pending {
+  background-color: #e08b1a;
 }
