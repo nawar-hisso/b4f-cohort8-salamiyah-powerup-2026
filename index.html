@@ -1,21 +1,40 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>TaskFlow</title>
 
-    <link rel="stylesheet" href="css/style.css">
-</head>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
 
-<body>
+  <body>
+    <!-- The top bar of the application. -->
+    <header class="header">
+      <h1>TaskFlow</h1>
+      <p>All your tasks in one place.</p>
+    </header>
 
-    <!-- We will build the TaskFlow page here during this session. -->
+    <main class="container">
+      <!-- The cards that show our numbers. -->
+      <section class="stats">
+        <div class="stat-card">
+          <p class="stat-label">Total Tasks</p>
+          <p class="stat-value">6</p>
+        </div>
+      </section>
+
+      <!-- The list of tasks. -->
+      <ul class="task-list">
+        <li class="task-item">
+          <span class="task-title">Design the TaskFlow page</span>
+          <span class="task-status">Completed</span>
+          <span class="task-status">Completed</span>
+        </li>
+      </ul>
+    </main>
 
     <script src="js/app.js"></script>
-
-</body>
-
+  </body>
 </html>
