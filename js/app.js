@@ -8,7 +8,7 @@ const tasks = [
   {
     id: 1,
     title: "Design the TaskFlow page",
-    completed: true,
+    completed: true, // => pending: false
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ const tasks = [
   {
     id: 3,
     title: "Style the statistic cards",
-    completed: false,
+    completed: false, // => pending: true
   },
   {
     id: 4,
@@ -37,11 +37,17 @@ const tasks = [
   },
 ];
 
+let currentFilter = "all";
+
 const taskList = document.querySelector("#taskList");
 
 const totalCount = document.querySelector("#totalCount");
 const completedCount = document.querySelector("#completedCount");
 const pendingCount = document.querySelector("#pendingCount");
+
+const filterAllButton = document.querySelector("#filterAll");
+const filterCompletedButton = document.querySelector("#filterCompleted");
+const filterPendingButton = document.querySelector("#filterPending");
 
 console.log(completedCount);
 
@@ -63,11 +69,28 @@ function updateStats() {
   pendingCount.textContent = pending;
 }
 
-// Build the HTML for every task and put it on the page.
-function renderTasks() {
-  let html = "";
+function getVisibleTasks() {
+  const visibleTasks = [];
 
   for (const task of tasks) {
+    if (currentFilter === "all") {
+      visibleTasks.push(task);
+    } else if (currentFilter === "completed" && task.completed) {
+      visibleTasks.push(task);
+    } else if (currentFilter === "pending" && !task.completed) {
+      visibleTasks.push(task);
+    }
+  }
+
+  return visibleTasks;
+}
+
+// Build the HTML for every task and put it on the page.
+function renderTasks() {
+  const visibleTasks = getVisibleTasks();
+  let html = "";
+
+  for (const task of visibleTasks) {
     let statusClass = "pending";
     let statusText = "Pending";
 
@@ -84,8 +107,37 @@ function renderTasks() {
         `;
   }
 
+  //   console.log(html);
+
   taskList.innerHTML = html;
 }
+
+function setFilter(newFilter, clickedButton) {
+  currentFilter = newFilter;
+
+  console.log(newFilter);
+  console.log(newFilter);
+
+  filterAllButton.classList.remove("active");
+  filterCompletedButton.classList.remove("active");
+  filterPendingButton.classList.remove("active");
+
+  clickedButton.classList.add("active");
+
+  renderTasks();
+}
+
+filterAllButton.addEventListener("click", function () {
+  setFilter("all", filterAllButton);
+});
+
+filterCompletedButton.addEventListener("click", function () {
+  setFilter("completed", filterCompletedButton);
+});
+
+filterPendingButton.addEventListener("click", function () {
+  setFilter("pending", filterPendingButton);
+});
 
 updateStats();
 renderTasks();
