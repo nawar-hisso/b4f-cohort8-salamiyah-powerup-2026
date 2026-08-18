@@ -35,12 +35,18 @@ const tasks = [
   },
 ];
 
+let currentFilter = "all";
+
 // The parts of the page that JavaScript needs to change.
 const taskList = document.querySelector("#taskList");
 
 const totalCount = document.querySelector("#totalCount");
 const completedCount = document.querySelector("#completedCount");
 const pendingCount = document.querySelector("#pendingCount");
+
+const filterAllButton = document.querySelector("#filterAll");
+const filterCompletedButton = document.querySelector("#filterCompleted");
+const filterPendingButton = document.querySelector("#filterPending");
 
 // Count the tasks and write the numbers into the three cards.
 function updateStats() {
@@ -60,11 +66,29 @@ function updateStats() {
   pendingCount.textContent = pending;
 }
 
-// Build the HTML for every task and put it on the page.
-function renderTasks() {
-  let html = "";
+function getVisibleTasks() {
+  const visibleTasks = [];
 
   for (const task of tasks) {
+    if (currentFilter === "all") {
+      visibleTasks.push(task);
+    } else if (currentFilter === "completed" && task.completed) {
+      visibleTasks.push(task);
+    } else if (currentFilter === "pending" && !task.completed) {
+      visibleTasks.push(task);
+    }
+  }
+
+  return visibleTasks;
+}
+
+// Build the HTML for every task and put it on the page.
+function renderTasks() {
+  const visibleTasks = getVisibleTasks();
+
+  let html = "";
+
+  for (const task of visibleTasks) {
     let statusClass = "pending";
     let statusText = "Pending";
 
@@ -83,6 +107,30 @@ function renderTasks() {
 
   taskList.innerHTML = html;
 }
+
+function setFilter(newFilter, clickedButton) {
+  currentFilter = newFilter;
+
+  filterAllButton.classList.remove("active");
+  filterCompletedButton.classList.remove("active");
+  filterPendingButton.classList.remove("active");
+
+  clickedButton.classList.add("active");
+
+  renderTasks();
+}
+
+filterAllButton.addEventListener("click", function () {
+  setFilter("all", filterAllButton);
+});
+
+filterCompletedButton.addEventListener("click", function () {
+  setFilter("completed", filterCompletedButton);
+});
+
+filterPendingButton.addEventListener("click", function () {
+  setFilter("pending", filterPendingButton);
+});
 
 // Show the page for the first time.
 updateStats();
