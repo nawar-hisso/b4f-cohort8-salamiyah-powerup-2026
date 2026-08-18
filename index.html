@@ -21,59 +21,29 @@
       <section class="stats">
         <div class="stat-card">
           <p class="stat-label">Total Tasks</p>
-          <p class="stat-value">6</p>
+          <p class="stat-value" id="totalCount">0</p>
         </div>
 
         <div class="stat-card">
           <p class="stat-label">Completed</p>
-          <p class="stat-value">2</p>
+          <p class="stat-value" id="completedCount">0</p>
         </div>
 
         <div class="stat-card">
           <p class="stat-label">Pending</p>
-          <p class="stat-value">4</p>
+          <p class="stat-value" id="pendingCount">0</p>
         </div>
       </section>
 
       <!-- The buttons that will choose which tasks we see. -->
       <section class="filters">
-        <button class="filter-button active">All</button>
-        <button class="filter-button">Completed</button>
-        <button class="filter-button">Pending</button>
+        <button class="filter-button active" id="filterAll">All</button>
+        <button class="filter-button" id="filterCompleted">Completed</button>
+        <button class="filter-button" id="filterPending">Pending</button>
       </section>
 
       <!-- The list of tasks. -->
-      <ul class="task-list">
-        <li class="task-item">
-          <span class="task-title">Design the TaskFlow page</span>
-          <span class="task-status completed">Completed</span>
-        </li>
-
-        <li class="task-item">
-          <span class="task-title">Write the HTML structure</span>
-          <span class="task-status completed">Completed</span>
-        </li>
-
-        <li class="task-item">
-          <span class="task-title">Style the statistic cards</span>
-          <span class="task-status pending">Pending</span>
-        </li>
-
-        <li class="task-item">
-          <span class="task-title">Build the task list</span>
-          <span class="task-status pending">Pending</span>
-        </li>
-
-        <li class="task-item">
-          <span class="task-title">Practice JavaScript</span>
-          <span class="task-status pending">Pending</span>
-        </li>
-
-        <li class="task-item">
-          <span class="task-title">Learn how an API works</span>
-          <span class="task-status pending">Pending</span>
-        </li>
-      </ul>
+      <ul class="task-list" id="taskList"></ul>
     </main>
 
     <footer class="footer">
