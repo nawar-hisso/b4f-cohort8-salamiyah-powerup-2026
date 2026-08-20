@@ -61,14 +61,20 @@ function updateStats() {
 async function loadTasks() {
   showLoading();
 
-  const response = await fetch(API_URL);
+  try {
+    const response = await fetch(API_URL);
 
-  tasks = await response.json();
+    // throw new Error();
 
-  hideLoading();
-  updateStats();
-  renderTasks();
-  updateProgressText();
+    tasks = await response.json();
+
+    hideLoading();
+    updateStats();
+    renderTasks();
+    updateProgressText();
+  } catch (error) {
+    showError();
+  }
 }
 
 function getVisibleTasks() {
@@ -162,10 +168,16 @@ searchInput.addEventListener("input", function () {
 
 function showLoading() {
   loadingMessage.classList.remove("hidden");
+  errorMessage.classList.add("hidden");
 }
 
 function hideLoading() {
   loadingMessage.classList.add("hidden");
+}
+
+function showError() {
+  loadingMessage.classList.add("hidden");
+  errorMessage.classList.remove("hidden");
 }
 
 loadTasks();
