@@ -4,59 +4,19 @@
    Our tasks live inside this file for now. */
 
 // Every task is an object with three pieces of information.
-const tasks = [
-  {
-    id: 1,
-    title: "Design the TaskFlow page",
-    completed: true, // => pending: false
-  },
-  {
-    id: 2,
-    title: "Write the HTML structure",
-    completed: true,
-  },
-  {
-    id: 3,
-    title: "Style the statistic cards",
-    completed: false, // => pending: true
-  },
-  {
-    id: 4,
-    title: "Build the task list",
-    completed: false,
-  },
-  {
-    id: 5,
-    title: "Practice JavaScript",
-    completed: false,
-  },
-  {
-    id: 6,
-    title: "Learn how an API works",
-    completed: false,
-  },
-  {
-    id: 7,
-    title: "Read about JavaScript objects",
-    completed: true,
-  },
-  {
-    id: 8,
-    title: "Help a teammate with CSS",
-    completed: true,
-  },
-  {
-    id: 9,
-    title: "Prepare questions for the next session",
-    completed: false,
-  },
-];
+const API_URL = "https://jsonplaceholder.typicode.com/todos?_limit=15";
+
+let tasks = [];
 
 let currentFilter = "all";
 
 let searchText = "";
 
 const taskList = document.querySelector("#taskList");
+
+const loadingMessage = document.querySelector("#loadingMessage");
+const errorMessage = document.querySelector("#errorMessage");
+
 const progressText = document.querySelector("#progressText");
 const searchInput = document.querySelector("#searchInput");
 
@@ -96,6 +56,19 @@ function updateStats() {
   totalCount.textContent = tasks.length;
   completedCount.textContent = completed;
   pendingCount.textContent = pending;
+}
+
+async function loadTasks() {
+  showLoading();
+
+  const response = await fetch(API_URL);
+
+  tasks = await response.json();
+
+  hideLoading();
+  updateStats();
+  renderTasks();
+  updateProgressText();
 }
 
 function getVisibleTasks() {
@@ -187,6 +160,12 @@ searchInput.addEventListener("input", function () {
   renderTasks();
 });
 
-updateStats();
-updateProgressText();
-renderTasks();
+function showLoading() {
+  loadingMessage.classList.remove("hidden");
+}
+
+function hideLoading() {
+  loadingMessage.classList.add("hidden");
+}
+
+loadTasks();
