@@ -33,6 +33,11 @@ function hideLoading() {
   loadingMessage.classList.add("hidden");
 }
 
+function showError() {
+  loadingMessage.classList.add("hidden");
+  errorMessage.classList.remove("hidden");
+}
+
 function updateProgressText() {
   let completed = 0;
 
@@ -65,14 +70,18 @@ function updateStats() {
 async function loadTasks() {
   showLoading();
 
-  const response = await fetch(API_URL);
+  try {
+    const response = await fetch(API_URL);
 
-  tasks = await response.json();
+    tasks = await response.json();
 
-  hideLoading();
-  updateStats();
-  renderTasks();
-  updateProgressText();
+    hideLoading();
+    updateStats();
+    renderTasks();
+    updateProgressText();
+  } catch (error) {
+    showError();
+  }
 }
 
 function getVisibleTasks() {
