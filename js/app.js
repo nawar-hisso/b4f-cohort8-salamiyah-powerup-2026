@@ -2,53 +2,9 @@
    Our tasks live inside this file for now. */
 
 // Every task is an object with three pieces of information.
-const tasks = [
-  {
-    id: 1,
-    title: "Design the TaskFlow page",
-    completed: true,
-  },
-  {
-    id: 2,
-    title: "Write the HTML structure",
-    completed: true,
-  },
-  {
-    id: 3,
-    title: "Style the statistic cards",
-    completed: false,
-  },
-  {
-    id: 4,
-    title: "Build the task list",
-    completed: false,
-  },
-  {
-    id: 5,
-    title: "Practice JavaScript",
-    completed: false,
-  },
-  {
-    id: 6,
-    title: "Learn how an API works",
-    completed: false,
-  },
-  {
-    id: 7,
-    title: "Read about JavaScript objects",
-    completed: true,
-  },
-  {
-    id: 8,
-    title: "Help a teammate with CSS",
-    completed: true,
-  },
-  {
-    id: 9,
-    title: "Prepare questions for the next session",
-    completed: false,
-  },
-];
+let tasks = [];
+
+const API_URL = "https://jsonplaceholder.typicode.com/todos?_limit=15";
 
 let currentFilter = "all";
 
@@ -56,6 +12,8 @@ let searchText = "";
 
 // The parts of the page that JavaScript needs to change.
 const taskList = document.querySelector("#taskList");
+const loadingMessage = document.querySelector("#loadingMessage");
+const errorMessage = document.querySelector("#errorMessage");
 const progressText = document.querySelector("#progressText");
 const searchInput = document.querySelector("#searchInput");
 
@@ -66,6 +24,14 @@ const pendingCount = document.querySelector("#pendingCount");
 const filterAllButton = document.querySelector("#filterAll");
 const filterCompletedButton = document.querySelector("#filterCompleted");
 const filterPendingButton = document.querySelector("#filterPending");
+
+function showLoading() {
+  loadingMessage.classList.remove("hidden");
+}
+
+function hideLoading() {
+  loadingMessage.classList.add("hidden");
+}
 
 function updateProgressText() {
   let completed = 0;
@@ -94,6 +60,19 @@ function updateStats() {
   totalCount.textContent = tasks.length;
   completedCount.textContent = completed;
   pendingCount.textContent = pending;
+}
+
+async function loadTasks() {
+  showLoading();
+
+  const response = await fetch(API_URL);
+
+  tasks = await response.json();
+
+  hideLoading();
+  updateStats();
+  renderTasks();
+  updateProgressText();
 }
 
 function getVisibleTasks() {
@@ -178,7 +157,4 @@ searchInput.addEventListener("input", function () {
   renderTasks();
 });
 
-// Show the page for the first time.
-updateStats();
-renderTasks();
-updateProgressText();
+loadTasks();

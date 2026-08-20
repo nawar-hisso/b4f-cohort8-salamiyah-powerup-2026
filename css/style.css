@@ -214,3 +214,21 @@ body {
   border-color: #3b6ef5;
   outline: none;
 }
+
+.message {
+  color: #6b7280;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.message.error {
+  background-color: #fdeaea;
+  border: 1px solid #d64545;
+  border-radius: 10px;
+  color: #d64545;
+  padding: 15px;
+}
+
+.hidden {
+  display: none;
+}
