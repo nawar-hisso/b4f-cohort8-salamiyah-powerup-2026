@@ -35,11 +35,30 @@ const tasks = [
     title: "Learn how an API works",
     completed: false,
   },
+  {
+    id: 7,
+    title: "Read about JavaScript objects",
+    completed: true,
+  },
+  {
+    id: 8,
+    title: "Help a teammate with CSS",
+    completed: true,
+  },
+  {
+    id: 9,
+    title: "Prepare questions for the next session",
+    completed: false,
+  },
 ];
 
 let currentFilter = "all";
 
+let searchText = "";
+
 const taskList = document.querySelector("#taskList");
+const progressText = document.querySelector("#progressText");
+const searchInput = document.querySelector("#searchInput");
 
 const totalCount = document.querySelector("#totalCount");
 const completedCount = document.querySelector("#completedCount");
@@ -49,7 +68,17 @@ const filterAllButton = document.querySelector("#filterAll");
 const filterCompletedButton = document.querySelector("#filterCompleted");
 const filterPendingButton = document.querySelector("#filterPending");
 
-console.log(completedCount);
+function updateProgressText() {
+  let completed = 0;
+
+  for (const task of tasks) {
+    if (task.completed) {
+      completed++;
+    }
+  }
+
+  progressText.textContent = `${completed} of ${tasks.length} tasks completed`;
+}
 
 // Count the tasks and write the numbers into the three cards.
 function updateStats() {
@@ -73,11 +102,23 @@ function getVisibleTasks() {
   const visibleTasks = [];
 
   for (const task of tasks) {
+    let matchesFilter = false;
+
     if (currentFilter === "all") {
-      visibleTasks.push(task);
+      matchesFilter = true;
     } else if (currentFilter === "completed" && task.completed) {
-      visibleTasks.push(task);
+      matchesFilter = true;
     } else if (currentFilter === "pending" && !task.completed) {
+      matchesFilter = true;
+    }
+
+    const title = task.title.toLowerCase();
+    const search = searchText.toLowerCase();
+    console.log(title);
+    console.log(search);
+    const matchesSearch = title.includes(search);
+
+    if (matchesFilter && matchesSearch) {
       visibleTasks.push(task);
     }
   }
@@ -139,5 +180,13 @@ filterPendingButton.addEventListener("click", function () {
   setFilter("pending", filterPendingButton);
 });
 
+searchInput.addEventListener("input", function () {
+  searchText = searchInput.value;
+
+  // console.log(searchText);
+  renderTasks();
+});
+
 updateStats();
+updateProgressText();
 renderTasks();

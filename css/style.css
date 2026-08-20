@@ -194,3 +194,27 @@ body {
   border-color: #3b6ef5;
   cursor: pointer;
 }
+
+.progress {
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.search {
+  margin-top: 15px;
+}
+
+.search-input {
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 14px;
+  width: 100%;
+}
+
+.search-input:focus {
+  border-color: #3b6ef5;
+  outline: none;
+}
