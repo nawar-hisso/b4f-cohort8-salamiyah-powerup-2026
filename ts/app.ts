@@ -57,8 +57,10 @@ const peopleList = document.querySelector<HTMLUListElement>("#peopleList");
 const allPeopleButton =
   document.querySelector<HTMLButtonElement>("#allPeopleButton");
 
-function updateProgressText() {
-  let completed = 0;
+function updateProgressText(): void {
+  if (!progressText) return;
+
+  let completed: number = 0;
 
   for (const task of tasks) {
     if (task.completed) {
@@ -70,9 +72,11 @@ function updateProgressText() {
 }
 
 // Count the tasks and write the numbers into the three cards.
-function updateStats() {
-  let completed = 0;
-  let pending = 0;
+function updateStats(): void {
+  if (!totalCount || !completedCount || !pendingCount) return;
+
+  let completed: number = 0;
+  let pending: number = 0;
 
   for (const task of tasks) {
     if (task.completed) {
@@ -87,7 +91,7 @@ function updateStats() {
   pendingCount.textContent = String(pending);
 }
 
-async function loadTasks() {
+async function loadTasks(): Promise<void> {
   showLoading();
 
   try {
@@ -109,7 +113,7 @@ async function loadTasks() {
   }
 }
 
-async function loadUsers() {
+async function loadUsers(): Promise<void> {
   try {
     const response = await fetch(USERS_URL);
 
@@ -134,11 +138,13 @@ function getUserName(userId: number): string {
   return "Unknown person";
 }
 
-function renderPeopleSummary() {
-  let html = "";
+function renderPeopleSummary(): void {
+  if (!peopleList) return;
+
+  let html: string = "";
 
   for (const user of users) {
-    let count = 0;
+    let count: number = 0;
 
     for (const task of tasks) {
       if (task.userId === user.id) {
@@ -149,13 +155,13 @@ function renderPeopleSummary() {
     // Ten people come back from the API but only some of them own any of
     // the tasks we loaded, so the rest are left out.
     if (count > 0) {
-      let word = "tasks";
+      let word: string = "tasks";
 
       if (count === 1) {
         word = "task";
       }
 
-      let activeClass = "";
+      let activeClass: string = "";
 
       if (selectedUserId === user.id) {
         activeClass = " active";
@@ -176,9 +182,11 @@ function renderPeopleSummary() {
   addPersonListeners();
 }
 
-function addPersonListeners() {
+function addPersonListeners(): void {
   for (const user of users) {
-    const personButton = document.querySelector(`#person-${user.id}`);
+    const personButton = document.querySelector<HTMLButtonElement>(
+      `#person-${user.id}`,
+    );
 
     // Somebody with no tasks has no button on the page.
     if (personButton) {
@@ -189,7 +197,7 @@ function addPersonListeners() {
   }
 }
 
-function setPerson(userId) {
+function setPerson(userId: number): void {
   if (selectedUserId === userId) {
     selectedUserId = 0;
   } else {
@@ -224,7 +232,7 @@ function getVisibleTasks(): Task[] {
     const title: string = task.title.toLowerCase();
     const search: string = searchText.toLowerCase();
 
-    const matchesSearch = title.includes(search);
+    const matchesSearch: boolean = title.includes(search);
 
     let matchesPerson: boolean = false;
 
@@ -243,13 +251,13 @@ function getVisibleTasks(): Task[] {
 }
 
 // Build the HTML for every task and put it on the page.
-function renderTasks() {
+function renderTasks(): void {
   const visibleTasks: Task[] = getVisibleTasks();
   let html: string = "";
 
   for (const task of visibleTasks) {
-    let statusClass = "pending";
-    let statusText = "Pending";
+    let statusClass: string = "pending";
+    let statusText: string = "Pending";
 
     if (task.completed) {
       statusClass = "completed";
@@ -270,7 +278,7 @@ function renderTasks() {
   taskList.innerHTML = html;
 }
 
-function setFilter(newFilter, clickedButton) {
+function setFilter(newFilter: string, clickedButton: HTMLButtonElement): void {
   currentFilter = newFilter;
 
   filterAllButton.classList.remove("active");
@@ -309,16 +317,16 @@ allPeopleButton.addEventListener("click", function () {
   renderTasks();
 });
 
-function showLoading() {
+function showLoading(): void {
   loadingMessage.classList.remove("hidden");
   errorMessage.classList.add("hidden");
 }
 
-function hideLoading() {
+function hideLoading(): void {
   loadingMessage.classList.add("hidden");
 }
 
-function showError() {
+function showError(): void {
   loadingMessage.classList.add("hidden");
   errorMessage.classList.remove("hidden");
 }
