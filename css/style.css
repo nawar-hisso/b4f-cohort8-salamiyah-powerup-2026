@@ -232,3 +232,65 @@ body {
 .hidden {
   display: none;
 }
+
+.task-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.task-user {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.people {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  margin-top: 20px;
+  padding: 15px;
+}
+
+.people-title {
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.people-list {
+  list-style: none;
+}
+
+.person-line {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.person-button {
+  background-color: #f1f3f7;
+  border: 1px solid #e2e5ea;
+  border-radius: 6px;
+  color: #1f2430;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.person-button:hover {
+  border-color: #3b6ef5;
+}
+
+/* The chosen person, and "All people" while nobody is chosen. */
+.person-button.active {
+  background-color: #3b6ef5;
+  border-color: #3b6ef5;
+  color: #ffffff;
+}
+
+#allPeopleButton {
+  margin-bottom: 10px;
+}
