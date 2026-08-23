@@ -4,13 +4,19 @@
    Our tasks live inside this file for now. */
 
 // Every task is an object with three pieces of information.
-const API_URL = "https://jsonplaceholder.typicode.com/todos?_limit=15";
+const API_URL = "https://jsonplaceholder.typicode.com/todos?_limit=50";
+
+const USERS_URL = "https://jsonplaceholder.typicode.com/users";
 
 let tasks = [];
+
+let users = [];
 
 let currentFilter = "all";
 
 let searchText = "";
+
+let selectedUserId = 0;
 
 const taskList = document.querySelector("#taskList");
 
@@ -27,6 +33,10 @@ const pendingCount = document.querySelector("#pendingCount");
 const filterAllButton = document.querySelector("#filterAll");
 const filterCompletedButton = document.querySelector("#filterCompleted");
 const filterPendingButton = document.querySelector("#filterPending");
+
+const peopleList = document.querySelector("#peopleList");
+
+const allPeopleButton = document.querySelector("#allPeopleButton");
 
 function updateProgressText() {
   let completed = 0;
@@ -62,6 +72,8 @@ async function loadTasks() {
   showLoading();
 
   try {
+    await loadUsers();
+
     const response = await fetch(API_URL);
 
     // throw new Error();
@@ -72,9 +84,108 @@ async function loadTasks() {
     updateStats();
     renderTasks();
     updateProgressText();
+    renderPeopleSummary();
   } catch (error) {
     showError();
   }
+}
+
+async function loadUsers() {
+  try {
+    const response = await fetch(USERS_URL);
+
+    users = await response.json();
+
+    console.log(users);
+  } catch (error) {
+    users = [];
+  }
+}
+
+function getUserName(userId) {
+  for (const user of users) {
+    if (user.id === userId) {
+      // Returning inside the loop stops the loop immediately.
+      return user.name;
+    }
+  }
+
+  // We only get here when nobody matched. This line is what keeps the word
+  // "undefined" off the screen.
+  return "Unknown person";
+}
+
+function renderPeopleSummary() {
+  let html = "";
+
+  for (const user of users) {
+    let count = 0;
+
+    for (const task of tasks) {
+      if (task.userId === user.id) {
+        count++;
+      }
+    }
+
+    // Ten people come back from the API but only some of them own any of
+    // the tasks we loaded, so the rest are left out.
+    if (count > 0) {
+      let word = "tasks";
+
+      if (count === 1) {
+        word = "task";
+      }
+
+      let activeClass = "";
+
+      if (selectedUserId === user.id) {
+        activeClass = " active";
+      }
+
+      html += `
+                <li class="person-line">
+                    <button class="person-button${activeClass}" id="person-${user.id}">
+                        ${user.name} - ${count} ${word}
+                    </button>
+                </li>
+            `;
+    }
+  }
+
+  peopleList.innerHTML = html;
+
+  addPersonListeners();
+}
+
+function addPersonListeners() {
+  for (const user of users) {
+    const personButton = document.querySelector(`#person-${user.id}`);
+
+    // Somebody with no tasks has no button on the page.
+    if (personButton) {
+      personButton.addEventListener("click", function () {
+        setPerson(user.id);
+      });
+    }
+  }
+}
+
+function setPerson(userId) {
+  if (selectedUserId === userId) {
+    selectedUserId = 0;
+  } else {
+    selectedUserId = userId;
+  }
+
+  if (selectedUserId === 0) {
+    allPeopleButton.classList.add("active");
+  } else {
+    allPeopleButton.classList.remove("active");
+  }
+
+  renderPeopleSummary();
+
+  renderTasks();
 }
 
 function getVisibleTasks() {
@@ -93,11 +204,18 @@ function getVisibleTasks() {
 
     const title = task.title.toLowerCase();
     const search = searchText.toLowerCase();
-    console.log(title);
-    console.log(search);
+
     const matchesSearch = title.includes(search);
 
-    if (matchesFilter && matchesSearch) {
+    let matchesPerson = false;
+
+    if (selectedUserId === 0) {
+      matchesPerson = true;
+    } else if (task.userId === selectedUserId) {
+      matchesPerson = true;
+    }
+
+    if (matchesFilter && matchesSearch && matchesPerson) {
       visibleTasks.push(task);
     }
   }
@@ -121,22 +239,20 @@ function renderTasks() {
 
     html += `
             <li class="task-item">
-                <span class="task-title">${task.title}</span>
+                <span class="task-text">
+                    <span class="task-title">${task.title}</span>
+                    <span class="task-user">${getUserName(task.userId)}</span>
+                </span>
                 <span class="task-status ${statusClass}">${statusText}</span>
             </li>
         `;
   }
-
-  //   console.log(html);
 
   taskList.innerHTML = html;
 }
 
 function setFilter(newFilter, clickedButton) {
   currentFilter = newFilter;
-
-  console.log(newFilter);
-  console.log(newFilter);
 
   filterAllButton.classList.remove("active");
   filterCompletedButton.classList.remove("active");
@@ -162,7 +278,15 @@ filterPendingButton.addEventListener("click", function () {
 searchInput.addEventListener("input", function () {
   searchText = searchInput.value;
 
-  // console.log(searchText);
+  renderTasks();
+});
+
+allPeopleButton.addEventListener("click", function () {
+  selectedUserId = 0;
+  allPeopleButton.classList.add("active");
+  console.log(selectedUserId);
+
+  renderPeopleSummary();
   renderTasks();
 });
 
