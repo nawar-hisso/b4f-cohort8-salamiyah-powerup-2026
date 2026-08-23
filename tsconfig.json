@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "rootDir": "ts",
+    "outDir": "js",
+
+    "noImplicitAny": false,
+    "strictNullChecks": false
+  },
+  "include": ["ts/**/*.ts"]
+}
