@@ -4,8 +4,12 @@
     "rootDir": "ts",
     "outDir": "js",
 
-    "noImplicitAny": false,
-    "strictNullChecks": false
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true
   },
   "include": ["ts/**/*.ts"]
 }
