@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- The top bar of the application. -->
+    <header class="header">
+        <h1>TaskFlow</h1>
+        <p>All your tasks in one place.</p>
+    </header>
+
+    <main class="container">
+
+        <!-- The cards that show our numbers.
+             JavaScript writes the numbers into the id elements. -->
+        <section class="stats">
+
+            <div class="stat-card">
+                <p class="stat-label">Total Tasks</p>
+                <p class="stat-value" id="totalCount">0</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-label">Completed</p>
+                <p class="stat-value" id="completedCount">0</p>
+            </div>
+
+            <div class="stat-card">
+                <p class="stat-label">Pending</p>
+                <p class="stat-value" id="pendingCount">0</p>
+            </div>
+
+        </section>
+
+        <!-- The buttons that choose which tasks we see. -->
+        <section class="filters">
+            <button class="filter-button active" id="filterAll">All</button>
+            <button class="filter-button" id="filterCompleted">Completed</button>
+            <button class="filter-button" id="filterPending">Pending</button>
+        </section>
+
+        <!-- Shown while we wait for the API to answer. -->
+        <p class="message" id="loadingMessage">Loading tasks...</p>
+
+        <!-- Shown only when the tasks could not be loaded. -->
+        <p class="message error hidden" id="errorMessage">
+            We could not load the tasks. Please check your internet connection and refresh the page.
+        </p>
+
+        <!-- The list of tasks. JavaScript fills this list. -->
+        <ul class="task-list" id="taskList"></ul>
+
+    </main>
+
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
