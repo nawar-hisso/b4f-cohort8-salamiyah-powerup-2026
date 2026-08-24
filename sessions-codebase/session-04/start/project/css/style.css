@@ -1,0 +1,285 @@
+/* ---------- Basic setup ---------- */
+
+/* Remove the spacing the browser adds by default,
+   and make width include padding and border. */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f5f7;
+    color: #1f2430;
+    line-height: 1.5;
+}
+
+/* ---------- Header ---------- */
+
+.header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e2e5ea;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.header h1 {
+    color: #3b6ef5;
+    font-size: 32px;
+}
+
+.header p {
+    color: #6b7280;
+    margin-top: 6px;
+}
+
+/* ---------- Page container ---------- */
+
+/* max-width keeps the page readable on big screens.
+   margin: 0 auto puts the container in the middle. */
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* ---------- Statistic cards ---------- */
+
+/* display: flex puts the cards next to each other in a row. */
+.stats {
+    display: flex;
+    gap: 16px;
+}
+
+/* flex: 1 means every card takes an equal share of the row. */
+.stat-card {
+    flex: 1;
+    background-color: #ffffff;
+    border: 1px solid #e2e5ea;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-label {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.stat-value {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* ---------- Filter buttons ---------- */
+
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.filter-button {
+    background-color: #ffffff;
+    border: 1px solid #e2e5ea;
+    border-radius: 8px;
+    color: #1f2430;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 10px 18px;
+}
+
+/* Give the user feedback when the mouse is over a button. */
+.filter-button:hover {
+    border-color: #3b6ef5;
+}
+
+/* The button of the filter that is currently selected. */
+.filter-button.active {
+    background-color: #3b6ef5;
+    border-color: #3b6ef5;
+    color: #ffffff;
+}
+
+/* ---------- Task list ---------- */
+
+/* list-style: none removes the bullet points. */
+.task-list {
+    list-style: none;
+    margin-top: 20px;
+}
+
+/* justify-content: space-between pushes the title left
+   and the status right. */
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    background-color: #ffffff;
+    border: 1px solid #e2e5ea;
+    border-radius: 10px;
+    padding: 15px 18px;
+    margin-bottom: 12px;
+}
+
+.task-status {
+    border-radius: 20px;
+    color: #ffffff;
+    background-color: #6b7280;
+    font-size: 12px;
+    padding: 5px 12px;
+}
+
+/* Green for finished work, orange for work that is still open. */
+.task-status.completed {
+    background-color: #17a673;
+}
+
+.task-status.pending {
+    background-color: #e08b1a;
+}
+
+/* ---------- Small screens ---------- */
+
+/* On a narrow screen there is no room for three cards in one row,
+   so we turn the row into a column. */
+@media (max-width: 600px) {
+
+    .header h1 {
+        font-size: 26px;
+    }
+
+    .stats {
+        flex-direction: column;
+    }
+
+    .filters {
+        flex-wrap: wrap;
+    }
+
+}
+
+/* ---------- Messages ---------- */
+
+.message {
+    color: #6b7280;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.message.error {
+    background-color: #fdeaea;
+    border: 1px solid #d64545;
+    border-radius: 10px;
+    color: #d64545;
+    padding: 15px;
+}
+
+/* Anything with this class is not shown on the page. */
+.hidden {
+    display: none;
+}
+
+
+/* ---------- ALREADY IN THE PROJECT (Session 2 homework): search box ---------- */
+
+.search {
+    margin-top: 15px;
+}
+
+.search-input {
+    border: 1px solid #e2e5ea;
+    border-radius: 8px;
+    font-size: 15px;
+    padding: 10px 14px;
+    width: 100%;
+}
+
+.search-input:focus {
+    border-color: #3b6ef5;
+    outline: none;
+}
+
+
+/* ---------- ALREADY IN THE PROJECT (Session 2 homework): progress ---------- */
+
+.progress {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: 12px;
+    text-align: center;
+}
+
+
+/* ---------- CORE homework: the owner's name under the task title ---------- */
+
+/* The title and the name are stacked, so the row needs a column for them. */
+.task-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.task-user {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+
+/* ---------- STRETCH homework: tasks per person ---------- */
+
+.people {
+    background-color: #ffffff;
+    border: 1px solid #e2e5ea;
+    border-radius: 10px;
+    margin-top: 20px;
+    padding: 15px;
+}
+
+.people-title {
+    color: #6b7280;
+    font-size: 13px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.people-list {
+    list-style: none;
+}
+
+.people-list li {
+    margin-bottom: 6px;
+}
+
+
+/* ---------- CHALLENGE homework: each person is a button ---------- */
+
+.person-button {
+    background-color: #f1f3f7;
+    border: 1px solid #e2e5ea;
+    border-radius: 6px;
+    color: #1f2430;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 6px 10px;
+    text-align: left;
+    width: 100%;
+}
+
+.person-button:hover {
+    border-color: #3b6ef5;
+}
+
+/* The chosen person, and "All people" while nobody is chosen. */
+.person-button.active {
+    background-color: #3b6ef5;
+    border-color: #3b6ef5;
+    color: #ffffff;
+}
+
+#allPeopleButton {
+    margin-bottom: 10px;
+}
