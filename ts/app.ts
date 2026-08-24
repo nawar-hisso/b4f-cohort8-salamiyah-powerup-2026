@@ -42,8 +42,10 @@ let selectedUserId: number = 0;
 
 // The parts of the page that JavaScript needs to change.
 const taskList = document.querySelector("#taskList");
-const loadingMessage = document.querySelector("#loadingMessage");
-const errorMessage = document.querySelector("#errorMessage");
+const loadingMessage: HTMLParagraphElement | null =
+  document.querySelector("#loadingMessage");
+const errorMessage: HTMLParagraphElement | null =
+  document.querySelector("#errorMessage");
 const progressText = document.querySelector("#progressText");
 
 // The search box is an <input>, and we need its .value property, which only
@@ -70,16 +72,20 @@ const filterPendingButton = document.querySelector("#filterPending");
 
 // Show the waiting message and hide any old error message.
 function showLoading(): void {
+  if (!loadingMessage || !errorMessage) return;
+
   loadingMessage.classList.remove("hidden");
   errorMessage.classList.add("hidden");
 }
 
 function hideLoading(): void {
+  if (!loadingMessage) return;
+
   loadingMessage.classList.add("hidden");
 }
 
 // Hide the waiting message and tell the user that something went wrong.
-function showError(source: string): void {
+function showError(): void {
   if (!loadingMessage || !errorMessage) {
     return;
   }
@@ -90,8 +96,6 @@ function showError(source: string): void {
 
 // Ask the API for the tasks and then show them on the page.
 async function loadTasks() {
-  const requestLabel = "tasks";
-
   showLoading();
 
   try {
@@ -118,7 +122,7 @@ async function loadTasks() {
   } catch (error) {
     // We arrive here when a request could not be made at all, for
     // example when there is no internet connection.
-    showError("network");
+    showError();
   }
 }
 
@@ -149,6 +153,8 @@ function getUserName(userId: number) {
       return user.name;
     }
   }
+
+  return "Unknown person";
 }
 
 // Count how many of the loaded tasks belong to each person. The outer loop
@@ -203,12 +209,12 @@ function renderPeopleSummary(): void {
   // them, and that also threw away any listener the old buttons had, so
   // they must be given their listeners again every single time the
   // summary is drawn.
-  addPersonListeners(users.length);
+  addPersonListeners();
 }
 
 // Give every person button its click listener. We know each button's id, so
 // the querySelector we already use works here too.
-function addPersonListeners(count: number): void {
+function addPersonListeners(): void {
   for (const user of users) {
     const personButton = document.querySelector(`#person-${user.id}`);
 
@@ -223,7 +229,7 @@ function addPersonListeners(count: number): void {
 
 // Remember which person is chosen, then draw again. Clicking the person who
 // is already chosen clears the choice.
-function setPerson(userId): void {
+function setPerson(userId: number): void {
   if (!allPeopleButton) {
     return;
   }
@@ -254,8 +260,6 @@ function updateTaskSummary(): void {
     return;
   }
 
-  const taskCount = tasks.length;
-
   let completed = 0;
 
   for (const task of tasks) {
@@ -278,7 +282,6 @@ function updateTaskSummary(): void {
 // chosen person.
 function getVisibleTasks(): Task[] {
   const visibleTasks: Task[] = [];
-  const currentSearch = searchText;
 
   // The user's search text does not change while this loop is running, so
   // it is only calculated once, before the loop starts.
@@ -366,7 +369,7 @@ function renderTasks(): void {
 
 // Remember the new filter, move the blue colour to the button the user
 // clicked, and draw the list again.
-function setFilter(newFilter, clickedButton: Element): void {
+function setFilter(newFilter: string, clickedButton: Element): void {
   currentFilter = newFilter;
 
   if (!filterAllButton || !filterCompletedButton || !filterPendingButton) {
