@@ -59,6 +59,22 @@
         />
       </section>
 
+      <section class="add-task-section">
+        <p class="add-task-title">Add a task</p>
+        <div class="add-task-controls">
+          <input
+            type="text"
+            id="newTaskTitle"
+            class="add-task-input"
+            placeholder="Task title..."
+          />
+          <select id="newTaskOwner" class="add-task-select"></select>
+          <button type="button" id="addTaskButton" class="add-task-button">
+            Add Task
+          </button>
+        </div>
+      </section>
+
       <p class="message" id="loadingMessage">Loading tasks...</p>
 
       <p class="message error" id="errorMessage">

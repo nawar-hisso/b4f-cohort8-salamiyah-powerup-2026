@@ -17,6 +17,7 @@ let searchText = "";
 // Which person the user clicked in the summary. 0 means "nobody is chosen",
 // so every person's tasks are shown.
 let selectedUserId = 0;
+let nextTaskId = 1000;
 // The parts of the page that JavaScript needs to change.
 const taskList = document.querySelector("#taskList");
 const loadingMessage = document.querySelector("#loadingMessage");
@@ -37,6 +38,9 @@ const allPeopleButton = document.querySelector("#allPeopleButton");
 const filterAllButton = document.querySelector("#filterAll");
 const filterCompletedButton = document.querySelector("#filterCompleted");
 const filterPendingButton = document.querySelector("#filterPending");
+const newTaskTitle = document.querySelector("#newTaskTitle");
+const newTaskOwner = document.querySelector("#newTaskOwner");
+const addTaskButton = document.querySelector("#addTaskButton");
 // Show the waiting message and hide any old error message.
 function showLoading() {
     if (!loadingMessage || !errorMessage)
@@ -57,6 +61,45 @@ function showError() {
     loadingMessage.classList.add("hidden");
     errorMessage.classList.remove("hidden");
 }
+function refreshTaskViews() {
+    updateTaskSummary();
+    renderTasks();
+    renderPeopleSummary();
+}
+function renderOwnerOptions() {
+    if (!newTaskOwner) {
+        return;
+    }
+    let html = `<option value="">Choose owner</option>`;
+    for (const user of users) {
+        html += `<option value="${user.id}">${user.name}</option>`;
+    }
+    newTaskOwner.innerHTML = html;
+}
+function addTask() {
+    if (!newTaskTitle || !newTaskOwner) {
+        return;
+    }
+    const nextId = tasks.length + 1;
+    const title = newTaskTitle.value.trim();
+    if (title === "") {
+        return;
+    }
+    const ownerValue = newTaskOwner.value;
+    if (ownerValue === "") {
+        return;
+    }
+    const newTask = {
+        id: nextId,
+        userId: Number(ownerValue),
+        title: title,
+        completed: false,
+    };
+    tasks.push(newTask);
+    newTaskTitle.value = "";
+    newTaskOwner.value = "";
+    refreshTaskViews();
+}
 // Ask the API for the tasks and then show them on the page.
 async function loadTasks() {
     showLoading();
@@ -65,18 +108,14 @@ async function loadTasks() {
         // them. Without `await` the rows would be built while `users` is
         // still empty and every name would be the fallback text.
         await loadUsers();
+        renderOwnerOptions();
         const response = await fetch(TASKS_URL);
         // The answer arrives as text, so we turn it into JavaScript objects.
         // response.json() only knows it received "some value", typed any, so
         // we tell TypeScript what shape to expect with "as Task[]".
         tasks = (await response.json());
         hideLoading();
-        updateTaskSummary();
-        renderTasks();
-        // The summary describes everything that was loaded, so it is drawn
-        // here - where new data arrives - and NOT inside renderTasks(),
-        // which runs again on every filter click and keystroke.
-        renderPeopleSummary();
+        refreshTaskViews();
     }
     catch (error) {
         // We arrive here when a request could not be made at all, for
@@ -175,6 +214,22 @@ function addPersonListeners() {
             });
         }
     }
+}
+function addDeleteListeners(visibleTasks) {
+    for (const task of visibleTasks) {
+        const deleteButton = document.querySelector(`#delete-task-${task.id}`);
+        if (deleteButton) {
+            deleteButton.addEventListener("click", function () {
+                deleteTask(task.id);
+            });
+        }
+    }
+}
+function deleteTask(taskId) {
+    tasks = tasks.filter(function (task) {
+        return task.id !== taskId;
+    });
+    refreshTaskViews();
 }
 // Remember which person is chosen, then draw again. Clicking the person who
 // is already chosen clears the choice.
@@ -313,10 +368,14 @@ function renderTasks() {
                     <span class="task-user">${getUserName(task.userId)}</span>
                 </span>
                 <span class="task-status ${statusClass}">${statusText}</span>
+                <div class="task-actions">
+                    <button id="delete-task-${task.id}" class="delete-task-button" type="button">Delete</button>
+                </div>
             </li>
         `;
     }
     taskList.innerHTML = html;
+    addDeleteListeners(visibleTasks);
 }
 // Remember the new filter, move the blue colour to the button the user
 // clicked, and draw the list again.
@@ -335,7 +394,8 @@ if (filterAllButton &&
     filterCompletedButton &&
     filterPendingButton &&
     searchInput &&
-    allPeopleButton) {
+    allPeopleButton &&
+    addTaskButton) {
     filterAllButton.addEventListener("click", function () {
         setFilter("all", filterAllButton);
     });
@@ -356,6 +416,9 @@ if (filterAllButton &&
         allPeopleButton.classList.add("active");
         renderPeopleSummary();
         renderTasks();
+    });
+    addTaskButton.addEventListener("click", function () {
+        addTask();
     });
 }
 // Start the application.
