@@ -307,10 +307,56 @@ function addDeleteListeners(visibleTasks: Task[]): void {
   }
 }
 
+function addEditListeners(visibleTasks: Task[]): void {
+  for (const task of visibleTasks) {
+    const editButton = document.querySelector(`#edit-task-${task.id}`);
+
+    if (editButton) {
+      editButton.addEventListener("click", function () {
+        editTask(task.id);
+      });
+    }
+  }
+}
+
 function deleteTask(taskId: number): void {
   tasks = tasks.filter(function (task) {
     return task.id !== taskId;
   });
+
+  if (selectedUserId !== 0) {
+    const selectedPersonTask = tasks.find(function (task) {
+      return task.userId === selectedUserId;
+    });
+
+    if (!selectedPersonTask) {
+      selectedUserId = 0;
+
+      if (allPeopleButton) {
+        allPeopleButton.classList.add("active");
+      }
+    }
+  }
+
+  refreshTaskViews();
+}
+
+function editTask(taskId: number): void {
+  const task = tasks.find(function (task) {
+    return (task.id = taskId);
+  });
+
+  if (!task) {
+    return;
+  }
+
+  const newTitle = prompt("Edit task title:", task.title);
+
+  if (newTitle === null) {
+    return;
+  }
+
+  task.title = newTitle.trim();
 
   refreshTaskViews();
 }
@@ -480,6 +526,7 @@ function renderTasks(): void {
                 </span>
                 <span class="task-status ${statusClass}">${statusText}</span>
                 <div class="task-actions">
+                    <button id="edit-task-${task.id}" class="edit-task-button" type="button">Edit</button>
                     <button id="delete-task-${task.id}" class="delete-task-button" type="button">Delete</button>
                 </div>
             </li>
@@ -489,6 +536,7 @@ function renderTasks(): void {
   taskList.innerHTML = html;
 
   addDeleteListeners(visibleTasks);
+  addEditListeners(visibleTasks);
 }
 
 // Remember the new filter, move the blue colour to the button the user

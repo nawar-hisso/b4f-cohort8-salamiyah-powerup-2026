@@ -225,10 +225,45 @@ function addDeleteListeners(visibleTasks) {
         }
     }
 }
+function addEditListeners(visibleTasks) {
+    for (const task of visibleTasks) {
+        const editButton = document.querySelector(`#edit-task-${task.id}`);
+        if (editButton) {
+            editButton.addEventListener("click", function () {
+                editTask(task.id);
+            });
+        }
+    }
+}
 function deleteTask(taskId) {
     tasks = tasks.filter(function (task) {
         return task.id !== taskId;
     });
+    if (selectedUserId !== 0) {
+        const selectedPersonTask = tasks.find(function (task) {
+            return task.userId === selectedUserId;
+        });
+        if (!selectedPersonTask) {
+            selectedUserId = 0;
+            if (allPeopleButton) {
+                allPeopleButton.classList.add("active");
+            }
+        }
+    }
+    refreshTaskViews();
+}
+function editTask(taskId) {
+    const task = tasks.find(function (task) {
+        return (task.id = taskId);
+    });
+    if (!task) {
+        return;
+    }
+    const newTitle = prompt("Edit task title:", task.title);
+    if (newTitle === null) {
+        return;
+    }
+    task.title = newTitle.trim();
     refreshTaskViews();
 }
 // Remember which person is chosen, then draw again. Clicking the person who
@@ -369,6 +404,7 @@ function renderTasks() {
                 </span>
                 <span class="task-status ${statusClass}">${statusText}</span>
                 <div class="task-actions">
+                    <button id="edit-task-${task.id}" class="edit-task-button" type="button">Edit</button>
                     <button id="delete-task-${task.id}" class="delete-task-button" type="button">Delete</button>
                 </div>
             </li>
@@ -376,6 +412,7 @@ function renderTasks() {
     }
     taskList.innerHTML = html;
     addDeleteListeners(visibleTasks);
+    addEditListeners(visibleTasks);
 }
 // Remember the new filter, move the blue colour to the button the user
 // clicked, and draw the list again.
