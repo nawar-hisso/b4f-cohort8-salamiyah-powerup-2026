@@ -5,6 +5,7 @@
 
 // The shape of one task. This is the information TaskFlow actually uses.
 interface Task {
+  id: number;
   userId: number;
   title: string;
   completed: boolean;
@@ -68,6 +69,10 @@ const filterAllButton = document.querySelector("#filterAll");
 const filterCompletedButton = document.querySelector("#filterCompleted");
 const filterPendingButton = document.querySelector("#filterPending");
 
+const newTaskTitle = document.querySelector<HTMLInputElement>("#newTaskTitle");
+const newTaskOwner = document.querySelector<HTMLSelectElement>("#newTaskOwner");
+const addTaskButton = document.querySelector("#addTaskButton");
+
 // Show the waiting message and hide any old error message.
 function showLoading(): void {
   if (!loadingMessage || !errorMessage) return;
@@ -92,6 +97,60 @@ function showError(): void {
   errorMessage.classList.remove("hidden");
 }
 
+function refreshTaskViews(): void {
+  updateTaskSummary();
+  renderPeopleSummary();
+  renderTasks();
+}
+
+function renderOwnerOptions() {
+  if (!newTaskOwner) {
+    return;
+  }
+
+  let html = `<option value="">Choose owner</option>`;
+
+  for (const user of users) {
+    html += `<option value="${user.id}">${user.name}</option>`;
+  }
+
+  newTaskOwner.innerHTML = html;
+}
+
+function addTask() {
+  if (!newTaskTitle || !newTaskOwner) {
+    return;
+  }
+
+  const title = newTaskTitle.value.trim();
+
+  if (title === "") {
+    return;
+  }
+
+  const ownerValue = newTaskOwner.value;
+
+  if (ownerValue === "") {
+    return;
+  }
+
+  const nextTaskId = tasks.length + 1;
+
+  const newTask: Task = {
+    id: nextTaskId,
+    userId: Number(ownerValue),
+    title: title,
+    completed: false,
+  };
+
+  tasks.push(newTask);
+
+  newTaskTitle.value = "";
+  newTaskOwner.value = "";
+
+  refreshTaskViews();
+}
+
 // Ask the API for the tasks and then show them on the page.
 async function loadTasks() {
   showLoading();
@@ -102,6 +161,8 @@ async function loadTasks() {
     // still empty and every name would be the fallback text.
     await loadUsers();
 
+    renderOwnerOptions();
+
     const response = await fetch(TASKS_URL);
 
     // The answer arrives as text, so we turn it into JavaScript objects.
@@ -110,13 +171,11 @@ async function loadTasks() {
     tasks = (await response.json()) as Task[];
 
     hideLoading();
-    updateTaskSummary();
-    renderTasks();
 
     // The summary describes everything that was loaded, so it is drawn
     // here - where new data arrives - and NOT inside renderTasks(),
     // which runs again on every filter click and keystroke.
-    renderPeopleSummary();
+    refreshTaskViews();
   } catch (error) {
     // We arrive here when a request could not be made at all, for
     // example when there is no internet connection.
@@ -145,14 +204,23 @@ async function loadUsers() {
 // but does not return one. getVisibleTasks returns one but receives
 // nothing. This is the only function that does both.
 function getUserName(userId: number): string {
-  for (const user of users) {
-    if (user.id === userId) {
-      // Returning inside the loop stops the loop immediately.
-      return user.name;
-    }
+  const user = users.find(function (user) {
+    return user.id === userId;
+  });
+
+  if (user) {
+    return user.name;
   }
 
   return "Unknown person";
+
+  // for (const user of users) {
+  //   if (user.id === userId) {
+  //     // Returning inside the loop stops the loop immediately.
+  //     return user.name;
+  //   }
+  // }
+  // return "Unknown person";
 }
 
 // Count how many of the loaded tasks belong to each person. The outer loop
@@ -258,13 +326,13 @@ function updateTaskSummary(): void {
     return;
   }
 
-  let completed = 0;
-
-  for (const task of tasks) {
+  const completed = tasks.reduce(function (count, task) {
     if (task.completed) {
-      completed++;
+      return count + 1;
     }
-  }
+
+    return count;
+  }, 0);
 
   const pending = tasks.length - completed;
 
@@ -279,13 +347,13 @@ function updateTaskSummary(): void {
 // task must pass THREE checks: the status filter, the search text, and the
 // chosen person.
 function getVisibleTasks(): Task[] {
-  const visibleTasks: Task[] = [];
+  // const visibleTasks: Task[] = [];
 
   // The user's search text does not change while this loop is running, so
   // it is only calculated once, before the loop starts.
   const search = searchText.toLowerCase();
 
-  for (const task of tasks) {
+  return tasks.filter(function (task) {
     let matchesFilter = false;
 
     if (currentFilter === "all") {
@@ -296,13 +364,9 @@ function getVisibleTasks(): Task[] {
       matchesFilter = true;
     }
 
-    // Every task has a different title, so this still has to happen
-    // inside the loop.
     const title = task.title.toLowerCase();
     const matchesSearch = title.includes(search);
 
-    // The third check. While nobody is chosen this stays true for
-    // every task, so the list behaves as it always did.
     let matchesPerson = false;
 
     if (selectedUserId === 0) {
@@ -311,13 +375,42 @@ function getVisibleTasks(): Task[] {
       matchesPerson = true;
     }
 
-    // All three must agree before a task is shown.
-    if (matchesFilter && matchesSearch && matchesPerson) {
-      visibleTasks.push(task);
-    }
-  }
+    return matchesFilter && matchesSearch && matchesPerson;
+  });
 
-  return visibleTasks;
+  // return visibleTasks;
+
+  // for (const task of tasks) {
+  //   let matchesFilter = false;
+
+  //   if (currentFilter === "all") {
+  //     matchesFilter = true;
+  //   } else if (currentFilter === "completed" && task.completed) {
+  //     matchesFilter = true;
+  //   } else if (currentFilter === "pending" && !task.completed) {
+  //     matchesFilter = true;
+  //   }
+
+  //   // Every task has a different title, so this still has to happen
+  //   // inside the loop.
+  //   const title = task.title.toLowerCase();
+  //   const matchesSearch = title.includes(search);
+
+  //   // The third check. While nobody is chosen this stays true for
+  //   // every task, so the list behaves as it always did.
+  //   let matchesPerson = false;
+
+  //   if (selectedUserId === 0) {
+  //     matchesPerson = true;
+  //   } else if (task.userId === selectedUserId) {
+  //     matchesPerson = true;
+  //   }
+
+  //   // All three must agree before a task is shown.
+  //   if (matchesFilter && matchesSearch && matchesPerson) {
+  //     visibleTasks.push(task);
+  //   }
+  // }
 }
 
 // Build the HTML for the visible tasks and put it on the page.
@@ -358,11 +451,50 @@ function renderTasks(): void {
                     <span class="task-user">${getUserName(task.userId)}</span>
                 </span>
                 <span class="task-status ${statusClass}">${statusText}</span>
+                <div class="task-actions">
+                    <button id="delete-task-${task.id}" class="delete-task-button" type="button">Delete</button>
+                </div>
             </li>
         `;
   }
 
   taskList.innerHTML = html;
+
+  addDeleteListeners(visibleTasks);
+}
+
+function addDeleteListeners(visibleTasks: Task[]): void {
+  for (const task of visibleTasks) {
+    const deleteButton = document.querySelector(`#delete-task-${task.id}`);
+
+    if (deleteButton) {
+      deleteButton.addEventListener("click", function () {
+        deleteTask(task.id);
+      });
+    }
+  }
+}
+
+function deleteTask(taskId: number): void {
+  tasks = tasks.filter(function (task) {
+    return task.id !== taskId;
+  });
+
+  if (selectedUserId !== 0) {
+    const selectedPersonTask = tasks.find(function (task) {
+      return task.userId === selectedUserId;
+    });
+
+    if (!selectedPersonTask) {
+      selectedUserId = 0;
+
+      if (allPeopleButton) {
+        allPeopleButton.classList.add("active");
+      }
+    }
+  }
+
+  refreshTaskViews();
 }
 
 // Remember the new filter, move the blue color to the button the user
@@ -388,7 +520,8 @@ if (
   filterCompletedButton &&
   filterPendingButton &&
   searchInput &&
-  allPeopleButton
+  allPeopleButton &&
+  addTaskButton
 ) {
   filterAllButton.addEventListener("click", function () {
     setFilter("all", filterAllButton);
@@ -415,6 +548,10 @@ if (
 
     renderPeopleSummary();
     renderTasks();
+  });
+
+  addTaskButton.addEventListener("click", function () {
+    addTask();
   });
 }
 

@@ -294,3 +294,87 @@ body {
 #allPeopleButton {
   margin-bottom: 10px;
 }
+
+.add-task-section {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 10px;
+  margin-top: 20px;
+  padding: 15px;
+}
+
+.add-task-title {
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.add-task-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.add-task-input,
+.add-task-select {
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  font-size: 15px;
+  padding: 10px 12px;
+}
+
+.add-task-input {
+  flex: 2;
+}
+
+.add-task-select {
+  flex: 1;
+  background-color: #ffffff;
+}
+
+.add-task-input:focus,
+.add-task-select:focus {
+  border-color: #3b6ef5;
+  outline: none;
+}
+
+.add-task-button {
+  background-color: #3b6ef5;
+  border: 1px solid #3b6ef5;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 10px 18px;
+}
+
+.add-task-button:hover {
+  background-color: #2f5bd6;
+}
+
+/* Narrow screens: stack the Add Task controls instead of squeezing them
+   into one row. */
+@media (max-width: 600px) {
+  .add-task-controls {
+    flex-direction: column;
+  }
+}
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.delete-task-button {
+  background-color: #fdeaea;
+  border: 1px solid #d64545;
+  border-radius: 8px;
+  color: #d64545;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 6px 12px;
+}
+
+.delete-task-button:hover {
+  background-color: #d64545;
+  color: #ffffff;
+}
