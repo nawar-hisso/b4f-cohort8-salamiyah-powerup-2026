@@ -452,6 +452,7 @@ function renderTasks(): void {
                 </span>
                 <span class="task-status ${statusClass}">${statusText}</span>
                 <div class="task-actions">
+                    <button id="edit-task-${task.id}" class="edit-task-button" type="button">Edit</button>
                     <button id="delete-task-${task.id}" class="delete-task-button" type="button">Delete</button>
                 </div>
             </li>
@@ -461,6 +462,7 @@ function renderTasks(): void {
   taskList.innerHTML = html;
 
   addDeleteListeners(visibleTasks);
+  addEditListeners(visibleTasks);
 }
 
 function addDeleteListeners(visibleTasks: Task[]): void {
@@ -470,6 +472,18 @@ function addDeleteListeners(visibleTasks: Task[]): void {
     if (deleteButton) {
       deleteButton.addEventListener("click", function () {
         deleteTask(task.id);
+      });
+    }
+  }
+}
+
+function addEditListeners(visibleTasks: Task[]): void {
+  for (const task of visibleTasks) {
+    const editButton = document.querySelector(`#edit-task-${task.id}`);
+
+    if (editButton) {
+      editButton.addEventListener("click", function () {
+        editTask(task.id);
       });
     }
   }
@@ -493,6 +507,26 @@ function deleteTask(taskId: number): void {
       }
     }
   }
+
+  refreshTaskViews();
+}
+
+function editTask(taskId: number): void {
+  const task = tasks.find(function (task) {
+    return task.id === taskId;
+  });
+
+  if (!task) {
+    return;
+  }
+
+  const newTitle = prompt("Edit task title:", task.title);
+
+  if (!newTitle) {
+    return;
+  }
+
+  task.title = newTitle.trim();
 
   refreshTaskViews();
 }

@@ -378,3 +378,17 @@ body {
   background-color: #d64545;
   color: #ffffff;
 }
+
+.edit-task-button {
+  background-color: #ffffff;
+  border: 1px solid #e2e5ea;
+  border-radius: 8px;
+  color: #1f2430;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 6px 12px;
+}
+
+.edit-task-button:hover {
+  border-color: #3b6ef5;
+}

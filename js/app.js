@@ -350,6 +350,7 @@ function renderTasks() {
                 </span>
                 <span class="task-status ${statusClass}">${statusText}</span>
                 <div class="task-actions">
+                    <button id="edit-task-${task.id}" class="edit-task-button" type="button">Edit</button>
                     <button id="delete-task-${task.id}" class="delete-task-button" type="button">Delete</button>
                 </div>
             </li>
@@ -357,6 +358,7 @@ function renderTasks() {
     }
     taskList.innerHTML = html;
     addDeleteListeners(visibleTasks);
+    addEditListeners(visibleTasks);
 }
 function addDeleteListeners(visibleTasks) {
     for (const task of visibleTasks) {
@@ -364,6 +366,16 @@ function addDeleteListeners(visibleTasks) {
         if (deleteButton) {
             deleteButton.addEventListener("click", function () {
                 deleteTask(task.id);
+            });
+        }
+    }
+}
+function addEditListeners(visibleTasks) {
+    for (const task of visibleTasks) {
+        const editButton = document.querySelector(`#edit-task-${task.id}`);
+        if (editButton) {
+            editButton.addEventListener("click", function () {
+                editTask(task.id);
             });
         }
     }
@@ -383,6 +395,20 @@ function deleteTask(taskId) {
             }
         }
     }
+    refreshTaskViews();
+}
+function editTask(taskId) {
+    const task = tasks.find(function (task) {
+        return task.id === taskId;
+    });
+    if (!task) {
+        return;
+    }
+    const newTitle = prompt("Edit task title:", task.title);
+    if (!newTitle) {
+        return;
+    }
+    task.title = newTitle.trim();
     refreshTaskViews();
 }
 // Remember the new filter, move the blue color to the button the user
