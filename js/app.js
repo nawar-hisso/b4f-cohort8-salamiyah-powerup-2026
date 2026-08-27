@@ -104,13 +104,20 @@ async function loadUsers() {
 // but does not return one. getVisibleTasks returns one but receives
 // nothing. This is the only function that does both.
 function getUserName(userId) {
-    for (const user of users) {
-        if (user.id === userId) {
-            // Returning inside the loop stops the loop immediately.
-            return user.name;
-        }
+    const user = users.find(function (user) {
+        return user.id === userId;
+    });
+    if (user) {
+        return user.name;
     }
     return "Unknown person";
+    // for (const user of users) {
+    //   if (user.id === userId) {
+    //     // Returning inside the loop stops the loop immediately.
+    //     return user.name;
+    //   }
+    // }
+    // return "Unknown person";
 }
 // Count how many of the loaded tasks belong to each person. The outer loop
 // walks the people, the inner loop walks the tasks - one loop running
@@ -199,12 +206,18 @@ function updateTaskSummary() {
     if (!totalCount || !completedCount || !pendingCount || !progressText) {
         return;
     }
-    let completed = 0;
-    for (const task of tasks) {
+    // let completed = 0;
+    // for (const task of tasks) {
+    //   if (task.completed) {
+    //     completed++;
+    //   }
+    // }
+    const completed = tasks.reduce(function (i, task) {
         if (task.completed) {
-            completed++;
+            return i + 1;
         }
-    }
+        return i;
+    }, 0);
     const pending = tasks.length - completed;
     totalCount.textContent = String(tasks.length);
     completedCount.textContent = String(completed);
@@ -215,11 +228,11 @@ function updateTaskSummary() {
 // task must pass THREE checks: the status filter, the search text, and the
 // chosen person.
 function getVisibleTasks() {
-    const visibleTasks = [];
+    // const visibleTasks: Task[] = [];
     // The user's search text does not change while this loop is running, so
     // it is only calculated once, before the loop starts.
     const search = searchText.toLowerCase();
-    for (const task of tasks) {
+    return tasks.filter(function (task) {
         let matchesFilter = false;
         if (currentFilter === "all") {
             matchesFilter = true;
@@ -230,12 +243,8 @@ function getVisibleTasks() {
         else if (currentFilter === "pending" && !task.completed) {
             matchesFilter = true;
         }
-        // Every task has a different title, so this still has to happen
-        // inside the loop.
         const title = task.title.toLowerCase();
         const matchesSearch = title.includes(search);
-        // The third check. While nobody is chosen this stays true for
-        // every task, so the list behaves as it always did.
         let matchesPerson = false;
         if (selectedUserId === 0) {
             matchesPerson = true;
@@ -243,12 +252,34 @@ function getVisibleTasks() {
         else if (task.userId === selectedUserId) {
             matchesPerson = true;
         }
-        // All three must agree before a task is shown.
-        if (matchesFilter && matchesSearch && matchesPerson) {
-            visibleTasks.push(task);
-        }
-    }
-    return visibleTasks;
+        return matchesFilter && matchesSearch && matchesPerson;
+    });
+    // for (const task of tasks) {
+    //   let matchesFilter = false;
+    //   if (currentFilter === "all") {
+    //     matchesFilter = true;
+    //   } else if (currentFilter === "completed" && task.completed) {
+    //     matchesFilter = true;
+    //   } else if (currentFilter === "pending" && !task.completed) {
+    //     matchesFilter = true;
+    //   }
+    //   // Every task has a different title, so this still has to happen
+    //   // inside the loop.
+    //   const title = task.title.toLowerCase();
+    //   const matchesSearch = title.includes(search);
+    //   // The third check. While nobody is chosen this stays true for
+    //   // every task, so the list behaves as it always did.
+    //   let matchesPerson = false;
+    //   if (selectedUserId === 0) {
+    //     matchesPerson = true;
+    //   } else if (task.userId === selectedUserId) {
+    //     matchesPerson = true;
+    //   }
+    //   // All three must agree before a task is shown.
+    //   if (matchesFilter && matchesSearch && matchesPerson) {
+    //     visibleTasks.push(task);
+    //   }
+    // }
 }
 // Build the HTML for the visible tasks and put it on the page.
 function renderTasks() {
